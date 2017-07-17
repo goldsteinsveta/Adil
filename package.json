@@ -1,0 +1,33 @@
+{
+  "name": "Adil",
+  "productName": "Adil",
+  "description": "An app to add value to personal data.",
+  "version": "1.0.0",
+  "author": "Sveta Goldstein <hi@svetagoldstein.com>, Markus Kreutzer <contact@markuskreutzer.com>",
+  "copyright": "© 2017, Sveta Goldstein, Markus Kreutzer",
+  "homepage": "http://datavalueadded.org",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . Adil && cp public/assets/icons/icon.icns Adil-darwin-x64/Adil.app/Contents/Resources/electron.icns"
+  },
+  "repository": "",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^1.6.11",
+    "electron-packager": "^8.7.1"
+  },
+  "dependencies": {
+    "chromedriver": "^2.30.1",
+    "menubar": "^5.2.3",
+    "opn": "^5.1.0",
+    "selenium-webdriver": "^3.4.0"
+  }
+}

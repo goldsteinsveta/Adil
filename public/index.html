@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Adil 1.0.0</title>
+    <script src="assets/js/lib/jquery.js" onload="window.$ = window.jQuery = module.exports;"></script>
+    <script src="../renderer.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+  </head>
+
+  <body>
+
+    <div id="log_in">
+      <div class="message">
+        <p>Adil 1.0.0</p>
+      </div>
+      <div id="arrow"><p>Sign in to Chrome </p></div>
+      <div id="confirmation">
+        <h1>Signed in? Great!</h1>
+        <h1>Lets start collecting some data!</h1>
+        <br />
+        <h2 class="ipcBtn" id="continue" value="continue">Continue</h2>
+      </div>
+    </div>
+
+    <div id="main">
+      <div class="menu">
+        <div class="active menuDiv ipcBtn" id="collect" id="collect" value="driver"><h2>Collect</h2></div>
+        <div class="menuDiv ipcBtn" id="neutralize" value="neutralize"><h2>Neutralize</h2></div>
+        <div class="menuDiv" id="exchange"><h2>Exchange</h2></div>
+      </div>
+      <div class="menuDiv" id="dropdown_menu"><img src="assets/icons/icon.svg" /></div>
+      <div id="dropdown_content">
+        <div class="dropdown_item" id="item_first"><p>About</p></div>
+        <div class="dropdown_item"><p>Log out</p></div>
+        <div class="dropdown_item ipcBtn" id="item_last" value="quit"><p>Quit</p></div>
+      </div>
+
+      <div class="content">
+          <div class="item" id="content_collect">
+            <div class="item_inner">
+              <div class="item_inner_top">
+                <!--<h1>Use google like always. Your activity will be monitored here.</h1>-->
+                <div id="monitor_true"></div>
+                <!-- if nothing is broken these are trash: -->
+                <!-- <div id="link"></div>
+                <div id="keyword"></div> -->
+              </div>
+              <div id="stats" class="item_inner_bottom">
+              </div>
+            </div>
+          </div>
+          <div class="item" id="content_neutralize">
+            <div class="item_inner">
+              <div class="item_inner_top">
+                <div id="monitor_fake"></div>
+              </div>
+              <div class="item_inner_bottom">
+              </div>
+            </div>
+          </div>
+          <div class="item" id="content_exchange">
+            <div class="item_inner">
+              <div class="item_inner_top">
+
+              </div>
+              <div class="item_inner_bottom">
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="assets/js/index.js"></script>
+  </body>
+
+</html>
