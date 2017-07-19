@@ -1,4 +1,5 @@
 var fs = require('fs');
+var request = require('request');
 
 // selenium webdriver
 var webdriver = require('selenium-webdriver'),
@@ -53,13 +54,12 @@ const ipcRenderer = require('electron').ipcRenderer;
 // electron menubar
 var menubar = require('menubar');
 var mb = menubar({
-  //icon: path.join(__dirname, 'public', 'icons' ,'IconTemplate.png'),
-  //icon: path.join('file://', __dirname, 'IconTemplate.png'),
   index: path.join('file://', __dirname, 'public/index.html'),
   width: 350,
   height: 9999,
   x: 9999,
-  alwaysOnTop: true
+  alwaysOnTop: true,
+  tooltip: 'Adil\'s watching' 
 });
 
 
@@ -67,6 +67,8 @@ mb.on('ready', function ready () {
   // menubar icon
   const {Tray} = require('electron');
   const app_icon = new Tray('IconTemplate.png');
+  // show adil
+  mb.showWindow();
 
   var mode_fake;
 
@@ -114,6 +116,15 @@ mb.on('ready', function ready () {
         fs.appendFile(dataPath, data + '\n', function (err) {
           if (err) throw err;
           console.log('----> saved!');
+          // send to adilines
+          request.post(
+            'https://adilines.eu-gb.mybluemix.net/',
+            function (error, response, body) {
+              if (!error && response.statusCode == 200) {
+                console.log(body)
+              }
+            }
+          );
         });
 
         var resultHandler = function(err) {
@@ -122,9 +133,7 @@ mb.on('ready', function ready () {
           } else {
             console.log("file deleted");
           }
-
         }
-
         // del file
         fs.unlink(data_fsPath, resultHandler);
       }
