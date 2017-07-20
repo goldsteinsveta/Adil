@@ -249,15 +249,18 @@ p{
 #monitor {
 	margin-bottom: 30px;
 }
+#monitor_fake .monitor_search{
+	border-left: 7px solid #EBD11C;
+}
 .monitor_search {
-	border-left: 7px solid #364A9F;
+	border-left: 7px solid #DF9278;
 	font-family: InknutA, serif;
 	font-size: 17px;
 	line-height: 23px;
 	margin-top: 8px;
 }
 .monitor_url{
-	border-left: 7px solid #DF9278;
+	border-left: 7px solid #364A9F;
 	font-family: InknutA, serif;
 	font-size: 17px;
 	line-height: 23px;
