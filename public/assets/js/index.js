@@ -30,15 +30,17 @@ $(window).ready(function() {
     $("#collect").removeClass("active");
     $(".item").css({ marginLeft: "-200%" });
   });
-  //menu dropdown
-  $("#dropdown_menu").hover(function(event){
-    $("#dropdown_content").show();
-    $("#dropdown_menu").css('background-color', '#DCDBCF');
+
+  //menu
+  $("#dropdown_menu").click(function(event){
+    $("#dropdown_content").css({ left: "0%" });
+    $("#dropdown_content #menu").css({ left: "70px" });
   });
-  $("#main, .menu, .content").hover(function(event){
-    $("#dropdown_content").hide();
-    $("#dropdown_menu").css('background-color', 'transparent');
+  $("#close_menu").click(function(event){
+    $("#dropdown_content").css({ left: "-100%" });
+    $("#dropdown_content #menu").css({ left: "0px" });
   });
+
 
 
 });
