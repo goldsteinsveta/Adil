@@ -46,17 +46,6 @@ function get_curUrl() {
     curUrl = x;
   });
 };
-//modeFake
-var modeFake;
-function modeFake_is(mode) {
-  modeFake = mode;
-  // tell crx
-  var mf = JSON.parse(fs.readFileSync(appPath + '/crx/crxAdil/data/modeFake.json', 'utf8'));
-  mf.modeFake = modeFake;
-  fs.writeFile(appPath + '/crx/crxAdil/data/modeFake.json', JSON.stringify(mf), 'utf-8', function(err) {
-    if (err) throw err
-  });
-}
 
 // electron interprocess communication
 const ipcMain = require('electron').ipcMain;
@@ -81,9 +70,11 @@ mb.on('ready', function ready () {
   // show adil
   mb.showWindow();
 
+  var mode_fake;
+
   // dom is ready
   ipcMain.on('driver', function(event, screenSize) {
-    modeFake_is(false);
+    mode_fake = false;
     if (driver == undefined) {
       // build driver
       set_chromeOptions(screenSize);
@@ -125,7 +116,6 @@ mb.on('ready', function ready () {
         fs.appendFile(dataPath, data + '\n', function (err) {
           if (err) throw err;
           console.log('----> saved!');
-
           // send to adilines
           request.post(
             'https://adilines.eu-gb.mybluemix.net/',
@@ -135,7 +125,6 @@ mb.on('ready', function ready () {
               }
             }
           );
-
         });
 
         var resultHandler = function(err) {
@@ -159,9 +148,7 @@ mb.on('ready', function ready () {
   });
 
   ipcMain.on('neutralize', function(event) {
-
-    modeFake_is(true);
-
+    mode_fake = true;
 
     var data = [];
     function data_send() {
@@ -181,6 +168,7 @@ mb.on('ready', function ready () {
         get_curUrl();
 
         if (curUrl == wikiUrl) {
+          // driver.findElement(By.xpath('//*[@id="n-randompage"]/a')).click();
           driver.get('https://zh.wikipedia.org/wiki/Special:%E9%9A%8F%E6%9C%BA%E9%A1%B5%E9%9D%A2')
           load_article();
         }
@@ -203,7 +191,7 @@ mb.on('ready', function ready () {
           // get string, ('https://zh.wikipedia.org/wiki/').length == 30;
           s = curUrl.substring(30, curUrl.length);
           // search string
-          s_google = 'https://www.google.de/search?q=' + s
+          s_google = 'https://www.google.de/search?q=thisisfakesearch#newwindow=1&q=' + s + '"'
           driver.get(s_google);
 
           load_google();
@@ -217,7 +205,7 @@ mb.on('ready', function ready () {
         if (curUrl.indexOf(s_google) != -1) {
           data[2] = s;
           data_send();
-          if (modeFake == true) {
+          if (mode_fake == true) {
             setTimeout(function(){
               driver.executeScript("window.history.go(-2)");
               load_wiki();
@@ -252,7 +240,7 @@ mb.app.on('will-quit', function(){
 });
 
 ipcMain.on('quit', function(){
-  modeFake_is(false);
+  mode_fake = false
   clearInterval(watch);
   // TODO: check stuff to quit, instead of waiting
   setTimeout(function(){

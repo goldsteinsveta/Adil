@@ -1,6 +1,25 @@
-function parse(curUrl) {
+var modeFake;
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                modeFake = JSON.parse(rawFile.responseText).modeFake;
+            }
+        }
+    }
+    rawFile.send(null);
+}
 
-	if (curUrl != 'data:,' && curUrl.indexOf('zh.wikipedia.org') == -1 && curUrl.indexOf('search?q=thisisfakesearch') == -1 ) {
+function parse(curUrl, modeFake) {
+
+	if (curUrl != 'data:,') {
 
 	    var data = [];
 	    var search = '';
@@ -30,14 +49,12 @@ function parse(curUrl) {
 	      curUrl = 'https://google.com'   
 	    }
 
-	    data = {'date' : Date(), 'url' : curUrl, 's' : search};
+	    data = {'date' : Date(), 'url' : curUrl, 's' : search, 'modeFake' : modeFake};
 
 		var link = 'http://httpbin.org/get?' + JSON.stringify(data);
 		chrome.downloads.download({
 			url: link
 		});
-
-		console.log(data)
 	}
 }
 
@@ -56,7 +73,8 @@ chrome.history.search({
 
 	// watch history loop
 	setInterval(function(){
-
+		// update modeFake
+		readTextFile('data/modeFake.json');
 		chrome.history.search({
 			'text': '', 
 			'maxResults': 1,
@@ -68,8 +86,7 @@ chrome.history.search({
 
 			// compare curUrl with preUrl
 			if (curUrl != preUrl) {
-				
-				parse(curUrl);
+				parse(curUrl, modeFake);
 				preUrl = curUrl;
 			};
 		});
