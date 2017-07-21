@@ -103,9 +103,9 @@ mb.on('ready', function ready () {
     function watchLoop(){
       var data = [];
       // go to file
+      // TODO: get (1).json etc
       var data_fsPath = '/Users/' + username + '/Downloads/get.json';
 
-      // TODO: get (1).json etc
       if (fs.existsSync(data_fsPath)) {
         console.log("file found");
 
@@ -114,29 +114,33 @@ mb.on('ready', function ready () {
 
         data_fs = JSON.parse(data_fs.substring(data_fs.indexOf(prefix) + prefix.length, data_fs.length));
 
-        data[0] = data_fs['date'];
-        data[1] = unescape(data_fs['url']);
-        data[2] = data_fs['s'];
+        // check in which mode the link was requested
+        if (data_fs['modeFake'] == false) {
 
-        event.sender.send('newData', data);
+          data[0] = data_fs['date'];
+          data[1] = unescape(data_fs['url']);
+          data[2] = data_fs['s'];
 
-        // write data
-        var dataPath = path.join(__dirname, 'data', 'data.csv');
-        fs.appendFile(dataPath, data + '\n', function (err) {
-          if (err) throw err;
-          console.log('----> saved!');
+          event.sender.send('newData', data);
 
-          // send to adilines
-          request.post(
-            'https://adilines.eu-gb.mybluemix.net/',
-            function (error, response, body) {
-              if (!error && response.statusCode == 200) {
-                console.log(body)
+          // write data
+          var dataPath = path.join(__dirname, 'data', 'data.csv');
+          fs.appendFile(dataPath, data + '\n', function (err) {
+            if (err) throw err;
+            console.log('----> saved!');
+
+            // send to adilines
+            request.post(
+              'https://adilines.eu-gb.mybluemix.net/',
+              function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                  console.log(body)
+                }
               }
-            }
-          );
-
-        });
+            );
+          });
+          
+        };
 
         var resultHandler = function(err) {
           if(err) {
