@@ -128,7 +128,7 @@ mb.on('ready', function ready () {
         var dataPath = path.join(__dirname, 'data', 'data.csv');
         fs.appendFile(dataPath, data + '\n', function (err) {
           if (err) {
-            console.log('----> err!');  
+            console.log('----> err!');
           };
           console.log('----> saved!');
 
@@ -142,10 +142,8 @@ mb.on('ready', function ready () {
             }
           );
         });
-        
       };
     });
-  });
 
   ipcMain.on('continue', function(event) {
     var goToGoogle = 'http://google.com';
@@ -239,8 +237,8 @@ mb.on('ready', function ready () {
 });
 
 mb.on('after-create-window', function() {
-  mb.window.openDevTools();
-  // mb.window.loadUrl();
+  //mb.window.openDevTools();
+  //mb.window.loadUrl();
 });
 
 mb.app.on('will-quit', function(){

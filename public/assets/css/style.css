@@ -42,8 +42,8 @@ h2{
 }
 h1{
 	font-family: InknutA, serif;
-	font-size: 25px;
-	line-height: 31px;
+	font-size: 45px;
+	line-height: 60px;
 }
 p{
 	font-family: RobotoL, sans-serif;
@@ -197,10 +197,10 @@ p{
 	margin-top: 0px;
 }
 #dropdown_content #menu #item_one{
-	width: 87px;
+	width: 157px;
 }
 #dropdown_content #menu #item_three{
-	width: 65px;
+	width: 115px;
 }
 #dropdown_content #menu .dropdown_item:hover{
 	background-color: rgb(64, 64, 64);
@@ -321,4 +321,12 @@ p{
 	height: 0%;
 	border-top: 1px solid white;
 	overflow-x: scroll;
+}
+
+#content_exchange .item_inner_top iframe{
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	border: 0px solid white;
 }
