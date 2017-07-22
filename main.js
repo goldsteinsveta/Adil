@@ -126,7 +126,9 @@ mb.on('ready', function ready () {
           // write data
           var dataPath = path.join(__dirname, 'data', 'data.csv');
           fs.appendFile(dataPath, data + '\n', function (err) {
-            if (err) throw err;
+            if (err) {
+              console.log('----> err!');  
+            };
             console.log('----> saved!');
 
             // send to adilines
