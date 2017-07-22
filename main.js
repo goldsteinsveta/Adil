@@ -140,7 +140,7 @@ mb.on('ready', function ready () {
               }
             );
           });
-          
+
         };
 
         var resultHandler = function(err) {
@@ -256,8 +256,8 @@ mb.on('ready', function ready () {
 });
 
 mb.on('after-create-window', function() {
-  mb.window.openDevTools();
-  // mb.window.loadUrl();
+  //mb.window.openDevTools();
+  //mb.window.loadUrl();
 });
 
 mb.app.on('will-quit', function(){
