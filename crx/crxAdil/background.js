@@ -21,7 +21,6 @@ function parse(curUrl, modeFake) {
 
 	if (curUrl != 'data:,') {
 
-	    var data = [];
 	    var search = '';
 
 	    // parse curUrl
@@ -49,12 +48,30 @@ function parse(curUrl, modeFake) {
 	      curUrl = 'https://google.com'   
 	    }
 
-	    data = {'date' : Date(), 'url' : curUrl, 's' : search, 'modeFake' : modeFake};
+	    // old download:
+	    // data = {'date' : Date(), 'url' : curUrl, 's' : search, 'modeFake' : modeFake};
+		// var link = 'http://httpbin.org/get?' + JSON.stringify(data);
+		// chrome.downloads.download({
+		// 	url: link
+		// });
 
-		var link = 'http://httpbin.org/get?' + JSON.stringify(data);
-		chrome.downloads.download({
-			url: link
-		});
+		var data = {
+			"date": Date(), 
+			"url": curUrl, 
+			"s": search, 
+			"modeFake": modeFake
+		};
+		console.log(data);
+
+		var xhr = new XMLHttpRequest();
+	    xhr.open("POST", "http://localhost:8080", true);
+	    xhr.setRequestHeader("Content-type", "text/plain");
+	    xhr.onreadystatechange = function() {//Call a function when the state changes.
+		    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+		        // Request finished. Do processing here.
+		    }
+		}
+	 	xhr.send(JSON.stringify(data));
 	}
 }
 

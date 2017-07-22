@@ -25,7 +25,9 @@
     "electron-packager": "^8.7.1"
   },
   "dependencies": {
+    "body-parser": "^1.17.2",
     "chromedriver": "^2.30.1",
+    "express": "^4.15.3",
     "menubar": "^5.2.3",
     "opn": "^5.1.0",
     "selenium-webdriver": "^3.4.0"
