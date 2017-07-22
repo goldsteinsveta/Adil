@@ -18,9 +18,8 @@
       <div id="arrow"><p>Sign in to Chrome </p></div>
       <div id="confirmation">
         <h1>Signed in? Great!</h1>
-        <h1>Lets start collecting some data!</h1>
         <br />
-        <h2 class="ipcBtn" id="continue" value="continue">Continue</h2>
+        <p class="ipcBtn" id="continue" value="continue">→ Continue</p>
       </div>
     </div>
 
@@ -32,9 +31,12 @@
       </div>
       <div class="menuDiv" id="dropdown_menu"><img src="assets/icons/icon.svg" /></div>
       <div id="dropdown_content">
-        <div class="dropdown_item" id="item_first"><p>About</p></div>
-        <div class="dropdown_item"><p>Log out</p></div>
-        <div class="dropdown_item ipcBtn" id="item_last" value="quit"><p>Quit</p></div>
+        <p id="close_menu">×</p>
+        <div id="menu">
+          <div class="dropdown_item ipcBtn" id="item_one" value="about"><h1>About</h1></div>
+          <div class="dropdown_item ipcBtn" id="item_two" value="github"><h1>Github</h1></div>
+          <div class="dropdown_item ipcBtn" id="item_three" value="quit"><h1>Quit</h1></div>
+        </div>
       </div>
 
       <div class="content">

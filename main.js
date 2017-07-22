@@ -70,14 +70,15 @@ var mb = menubar({
   height: 9999,
   x: 9999,
   alwaysOnTop: true,
-  tooltip: 'Adil\'s watching' 
+  tooltip: 'Adil\'s watching'
 });
 
 
 mb.on('ready', function ready () {
   // menubar icon
   const {Tray} = require('electron');
-  const app_icon = new Tray('IconTemplate.png');
+  var iconPath = path.join(__dirname, 'IconTemplate.png')
+  const app_icon = new Tray(iconPath);
   // show adil
   mb.showWindow();
 
@@ -92,7 +93,7 @@ mb.on('ready', function ready () {
         .forBrowser('chrome')
         .setChromeOptions(chromeOptions)
         .build();
-    
+
       // first link
       var preUrl = 'http://datavalueadded.org/Adil/';
       driver.get(preUrl);
@@ -162,6 +163,18 @@ mb.on('ready', function ready () {
     var goToGoogle = 'http://google.com';
     // TODO: go to adil's handshake
     driver.get(goToGoogle);
+  });
+
+  ipcMain.on('github', function(event){
+    console.log("github");
+    var goToGithub = 'https://github.com/goldsteinsveta/Adil';
+    driver.get(goToGithub);
+  });
+
+  ipcMain.on('about', function(event){
+    console.log("github");
+    var goToAbout = 'http://datavalueadded.org/adil';
+    driver.get(goToAbout);
   });
 
   ipcMain.on('neutralize', function(event) {
