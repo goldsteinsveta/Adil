@@ -128,7 +128,7 @@ mb.on('ready', function ready () {
         var dataPath = path.join(__dirname, 'data', 'data.csv');
         fs.appendFile(dataPath, data + '\n', function (err) {
           if (err) {
-            console.log('----> err!');
+            console.log('----> err!');  
           };
           console.log('----> saved!');
 
@@ -142,8 +142,10 @@ mb.on('ready', function ready () {
             }
           );
         });
+        
       };
     });
+  });
 
   ipcMain.on('continue', function(event) {
     var goToGoogle = 'http://google.com';
@@ -171,7 +173,6 @@ mb.on('ready', function ready () {
     function data_send() {
       data[0] = Date();
       data[1] = curUrl;
-      console.log(data);
       event.sender.send('fakeData', data);
       data = [];
     }
@@ -181,12 +182,11 @@ mb.on('ready', function ready () {
       var wikiUrl = 'https://zh.wikipedia.org/wiki/Special:%E9%9A%8F%E6%9C%BA%E9%A1%B5%E9%9D%A2';
 
       function load_wiki() {
-        // upd current url
-        get_curUrl();
-
         if (curUrl.indexOf('zh.wikipedia.org') != -1) {
           data_send();
-          load_article();
+          if (modeFake == true) {
+            load_article();
+          };
         }
         else {
           // wait and try again
@@ -203,15 +203,16 @@ mb.on('ready', function ready () {
         s = curUrl.substring(30, curUrl.length);
 
         // search string
-        s_google = 'https://www.google.de/search?q=' + s
-        driver.get(s_google);
+        s_google = 'https://www.google.de/search?q=' + s;
 
-        load_google();
+        if (modeFake == true) {
+          driver.get(s_google);
+          load_google();
+          // upd current url
+          get_curUrl();
+        };
       }
       function load_google() {
-        // upd current url
-        get_curUrl();
-
         if (curUrl.indexOf(s_google) != -1) {
           data[2] = s;
           data_send();
@@ -219,6 +220,8 @@ mb.on('ready', function ready () {
             setTimeout(function(){
               driver.executeScript("window.history.go(-1)");
               load_wiki();
+              // upd current url
+              get_curUrl();
             },1000);
           };
         }
@@ -227,9 +230,12 @@ mb.on('ready', function ready () {
           setTimeout(load_google, 1000);
         }
       }
-
-      driver.get(wikiUrl);
-      load_wiki();
+      if (modeFake == true) {
+        driver.get(wikiUrl);
+        load_wiki();
+        // upd current url
+        get_curUrl();
+      };
     }
     fake_loop();
   });
@@ -237,8 +243,8 @@ mb.on('ready', function ready () {
 });
 
 mb.on('after-create-window', function() {
-  //mb.window.openDevTools();
-  //mb.window.loadUrl();
+  // mb.window.openDevTools();
+  // mb.window.loadUrl();
 });
 
 mb.app.on('will-quit', function(){
