@@ -1,14 +1,13 @@
 var modeFake;
-function readTextFile(file)
-{
+var preUrl;
+var curUrl;
+
+function readTextFile(file) {
     var rawFile = new XMLHttpRequest();
     rawFile.open("GET", file, false);
-    rawFile.onreadystatechange = function ()
-    {
-        if(rawFile.readyState === 4)
-        {
-            if(rawFile.status === 200 || rawFile.status == 0)
-            {
+    rawFile.onreadystatechange = function () {
+        if(rawFile.readyState === 4) {
+            if(rawFile.status === 200 || rawFile.status == 0) {
                 var allText = rawFile.responseText;
                 modeFake = JSON.parse(rawFile.responseText).modeFake;
             }
@@ -66,47 +65,54 @@ function parse(curUrl, modeFake) {
 		var xhr = new XMLHttpRequest();
 	    xhr.open("POST", "http://localhost:8080", true);
 	    xhr.setRequestHeader("Content-type", "text/plain");
-	    xhr.onreadystatechange = function() {//Call a function when the state changes.
-		    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-		        // Request finished. Do processing here.
-		    }
-		}
-	 	xhr.send(JSON.stringify(data));
+	    // don't know whether this is useful:
+		// xhr.onreadystatechange = function() {//Call a function when the state changes.
+		//     if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+		//         // Request finished. Do processing here.
+		//     }
+		// }
+	 	xhr.send(JSON.stringify(data), function(){
+	 		watch_loop();
+	 	});
 	}
 }
 
+// watch history loop
+function watch_loop() {
+	setInterval(function(){
+		// get last url in browser histry
+		chrome.history.search({
+			'text': '', 
+			'maxResults': 1,
+			'startTime': 0
+		}, function(res) {
+			// redefine current url
+			curUrl = res[0]['url'];
+			// compare curUrl with preUrl
+			if (curUrl != preUrl) {
+
+				// update modeFake
+				readTextFile('data/modeFake.json');
+				if (modeFake != true) {
+					parse(curUrl, modeFake);
+				};
+
+				// update curUrl
+				preUrl = curUrl;
+			};
+		});
+	}, 500);
+}
 
 // get last url in browser histry
-var preUrl;
 chrome.history.search({
 	'text': '', 
 	'maxResults': 1, 
 	'startTime': 0
 }, function(res) {
 	preUrl = res[0]['url'];
-
 	// define current url
 	var curUrl = preUrl;
-
-	// watch history loop
-	setInterval(function(){
-		// update modeFake
-		readTextFile('data/modeFake.json');
-		chrome.history.search({
-			'text': '', 
-			'maxResults': 1,
-			'startTime': 0
-		}, function(res) {
-
-			// redefine current url
-			curUrl = res[0]['url'];
-
-			// compare curUrl with preUrl
-			if (curUrl != preUrl) {
-				parse(curUrl, modeFake);
-				preUrl = curUrl;
-			};
-		});
-
-	}, 100);
+	// start watching
+	watch_loop();
 });

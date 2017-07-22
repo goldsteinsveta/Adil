@@ -118,10 +118,12 @@ mb.on('ready', function ready () {
       if (crx.modeFake == false) {
         var data = [];
 
+        // push res in data
         data[0] = crx['date'];
         data[1] = unescape(crx['url']);
         data[2] = crx['s'];
 
+        // send to rendereer
         event.sender.send('newData', data);
 
         // write data
@@ -170,66 +172,66 @@ mb.on('ready', function ready () {
     modeFake_is(true);
 
     var data = [];
+
     function data_send() {
+      // push to data
       data[0] = Date();
       data[1] = curUrl;
-      event.sender.send('fakeData', data);
+      // check the mode, in case if user pressed collect meanwhile
+      if (modeFake == true) {
+        // send to renderer
+        event.sender.send('fakeData', data);
+      };
       data = [];
     }
 
     function fake_loop() {
       // chinese wiki's main
       var wikiUrl = 'https://zh.wikipedia.org/wiki/Special:%E9%9A%8F%E6%9C%BA%E9%A1%B5%E9%9D%A2';
+      // search key
+      var s;
+      //search link
+      var s_google;
 
       function load_wiki() {
+        // check if zh.wiki is loaded
         if (curUrl.indexOf('zh.wikipedia.org') != -1) {
           data_send();
+          // check if user pressed collect meanwhile
           if (modeFake == true) {
-            load_article();
+            get_curUrl();
+            // get string, ('https://zh.wikipedia.org/wiki/').length == 30;
+            s = curUrl.substring(30, curUrl.length);
+            // search string
+            s_google = 'https://www.google.de/search?q=' + s;
+
+            if (modeFake == true) {
+              driver.get(s_google);
+              load_google();
+              get_curUrl();
+            };
           };
         }
+
         else {
           // wait and try again
           setTimeout(load_wiki, 1000);
         }
       }
-      var s;
-      var s_google;
-      function load_article() {
-        // upd current url
-        get_curUrl();
 
-        // get string, ('https://zh.wikipedia.org/wiki/').length == 30;
-        s = curUrl.substring(30, curUrl.length);
-
-        // search string
-        s_google = 'https://www.google.de/search?q=' + s;
-
-        if (modeFake == true) {
-          driver.get(s_google);
-          load_google();
-          // upd current url
-          get_curUrl();
-        };
-      }
       function load_google() {
+        // check if google is loaded
         if (curUrl.indexOf(s_google) != -1) {
           data[2] = s;
           data_send();
-          if (modeFake == true) {
-            setTimeout(function(){
-              driver.executeScript("window.history.go(-1)");
-              load_wiki();
-              // upd current url
-              get_curUrl();
-            },1000);
-          };
+          fake_loop();
         }
         else {
           // wait and try again
           setTimeout(load_google, 1000);
         }
       }
+
       if (modeFake == true) {
         driver.get(wikiUrl);
         load_wiki();
