@@ -5,8 +5,12 @@ var request = require('request');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-app.use(bodyParser.text());
-
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.post('/', function (req) {
+  console.log(req.body)
+  // res.send('----> got the link from crx');
+});
 var port = process.env.PORT || 8080
 app.listen(port, function() {
   console.log("listening on " + port);
@@ -44,7 +48,7 @@ var driver;
 var watch;
 
 // current url
-var curUrl = '';
+var curUrl;
 function get_curUrl() {
   driver
   .getCurrentUrl()
@@ -110,40 +114,63 @@ mb.on('ready', function ready () {
 
     // watch driver
     // TODO: if driver was closed
-    app.post('/', function (crx) {
-      crx = JSON.parse(crx.body);
-      console.log(crx)
+    function watchLoop(){
+      var data = [];
+      // go to file
+      // TODO: get (1).json etc
+      var data_fsPath = '/Users/' + username + '/Downloads/get.json';
 
-      // check in which mode the link was requested
-      if (crx.modeFake == false) {
-        var data = [];
+      if (fs.existsSync(data_fsPath)) {
+        console.log("file found");
 
-        data[0] = crx['date'];
-        data[1] = unescape(crx['url']);
-        data[2] = crx['s'];
+        var prefix = 'http://httpbin.org/get?'
+        var data_fs = JSON.parse(fs.readFileSync(data_fsPath, 'utf8'))['url'];
 
-        event.sender.send('newData', data);
+        data_fs = JSON.parse(data_fs.substring(data_fs.indexOf(prefix) + prefix.length, data_fs.length));
 
-        // write data
-        var dataPath = path.join(__dirname, 'data', 'data.csv');
-        fs.appendFile(dataPath, data + '\n', function (err) {
-          if (err) {
-            console.log('----> err!');
-          };
-          console.log('----> saved!');
+        // check in which mode the link was requested
+        if (data_fs['modeFake'] == false) {
 
-          // send to adilines
-          request.post(
-            'https://adilines.eu-gb.mybluemix.net/',
-            function (error, response, body) {
-              if (!error && response.statusCode == 200) {
-                console.log(body)
+          data[0] = data_fs['date'];
+          data[1] = unescape(data_fs['url']);
+          data[2] = data_fs['s'];
+
+          event.sender.send('newData', data);
+
+          // write data
+          var dataPath = path.join(__dirname, 'data', 'data.csv');
+          fs.appendFile(dataPath, data + '\n', function (err) {
+            if (err) {
+              console.log('----> err!');  
+            };
+            console.log('----> saved!');
+
+            // send to adilines
+            request.post(
+              'https://adilines.eu-gb.mybluemix.net/',
+              function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                  console.log(body)
+                }
               }
-            }
-          );
-        });
-      };
-    });
+            );
+          });
+          
+        };
+
+        var resultHandler = function(err) {
+          if(err) {
+            console.log("unlink failed", err);
+          } else {
+            console.log("file deleted");
+          }
+        }
+        // del file
+        fs.unlink(data_fsPath, resultHandler);
+      }
+    }
+    watch = setInterval(watchLoop, 500);
+  });
 
   ipcMain.on('continue', function(event) {
     var goToGoogle = 'http://google.com';
@@ -167,6 +194,7 @@ mb.on('ready', function ready () {
 
     modeFake_is(true);
 
+
     var data = [];
     function data_send() {
       data[0] = Date();
@@ -178,14 +206,14 @@ mb.on('ready', function ready () {
 
     function fake_loop() {
       // chinese wiki's main
-      var wikiUrl = 'https://zh.wikipedia.org/wiki/Special:%E9%9A%8F%E6%9C%BA%E9%A1%B5%E9%9D%A2';
+      var wikiUrl = 'https://zh.wikipedia.org/wiki/Wikipedia:%E9%A6%96%E9%A1%B5';
 
       function load_wiki() {
         // upd current url
         get_curUrl();
 
-        if (curUrl.indexOf('zh.wikipedia.org') != -1) {
-          data_send();
+        if (curUrl == wikiUrl) {
+          driver.get('https://zh.wikipedia.org/wiki/Special:%E9%9A%8F%E6%9C%BA%E9%A1%B5%E9%9D%A2')
           load_article();
         }
         else {
@@ -199,14 +227,20 @@ mb.on('ready', function ready () {
         // upd current url
         get_curUrl();
 
-        // get string, ('https://zh.wikipedia.org/wiki/').length == 30;
-        s = curUrl.substring(30, curUrl.length);
+        if (curUrl == wikiUrl) {
+          setTimeout(load_article, 1000);
+        }
+        else {
+          data_send();
+          // get string, ('https://zh.wikipedia.org/wiki/').length == 30;
+          s = curUrl.substring(30, curUrl.length);
+          // search string
+          s_google = 'https://www.google.de/search?q=' + s
+          driver.get(s_google);
 
-        // search string
-        s_google = 'https://www.google.de/search?q=' + s
-        driver.get(s_google);
+          load_google();
 
-        load_google();
+        }
       }
       function load_google() {
         // upd current url
@@ -217,7 +251,7 @@ mb.on('ready', function ready () {
           data_send();
           if (modeFake == true) {
             setTimeout(function(){
-              driver.executeScript("window.history.go(-1)");
+              driver.executeScript("window.history.go(-2)");
               load_wiki();
             },1000);
           };
@@ -237,11 +271,13 @@ mb.on('ready', function ready () {
 });
 
 mb.on('after-create-window', function() {
-  //mb.window.openDevTools();
-  //mb.window.loadUrl();
+  mb.window.openDevTools();
+  // mb.window.loadUrl();
 });
 
 mb.app.on('will-quit', function(){
+  // stop watching loop to prevent error
+  clearInterval(watch);
   setTimeout(function(){
     driver.quit();
   },1000);
@@ -249,6 +285,7 @@ mb.app.on('will-quit', function(){
 
 ipcMain.on('quit', function(){
   modeFake_is(false);
+  clearInterval(watch);
   // TODO: check stuff to quit, instead of waiting
   setTimeout(function(){
     driver.quit();
