@@ -66,6 +66,7 @@ function modeFake_is(mode) {
     if (err) throw err
   });
 }
+var f = 0;
 
 // electron interprocess communication
 const ipcMain = require('electron').ipcMain;
@@ -94,6 +95,7 @@ mb.on('ready', function ready () {
   // dom is ready
   ipcMain.on('driver', function(event, screenSize) {
     modeFake_is(false);
+
     if (driver == undefined) {
       // build driver
       set_chromeOptions(screenSize);
@@ -149,26 +151,8 @@ mb.on('ready', function ready () {
     });
   });
 
-  ipcMain.on('continue', function(event) {
-    var goToGoogle = 'http://google.com';
-    // TODO: go to adil's handshake
-    driver.get(goToGoogle);
-  });
-
-  ipcMain.on('github', function(event){
-    console.log("github");
-    var goToGithub = 'https://github.com/goldsteinsveta/Adil';
-    driver.get(goToGithub);
-  });
-
-  ipcMain.on('about', function(event){
-    console.log("github");
-    var goToAbout = 'http://datavalueadded.org/adil';
-    driver.get(goToAbout);
-  });
-
   ipcMain.on('neutralize', function(event) {
-
+    
     modeFake_is(true);
 
     var data = [];
@@ -185,7 +169,7 @@ mb.on('ready', function ready () {
       data = [];
     }
 
-    function fake_loop() {
+    function fake_wiki() {
       // chinese wiki's main
       var wikiUrl = 'https://zh.wikipedia.org/wiki/Special:%E9%9A%8F%E6%9C%BA%E9%A1%B5%E9%9D%A2';
       // search key
@@ -224,7 +208,9 @@ mb.on('ready', function ready () {
         if (curUrl.indexOf(s_google) != -1) {
           data[2] = s;
           data_send();
-          fake_loop();
+          setTimeout(function(){
+            fake_wiki();
+          }, 1000)
         }
         else {
           // wait and try again
@@ -239,7 +225,89 @@ mb.on('ready', function ready () {
         get_curUrl();
       };
     }
-    fake_loop();
+
+    function fake_youtube() {
+      var ytUrl = 'https://www.youtube.com/';
+      var preVideo;
+      driver.get(ytUrl);
+      load_yt();
+      get_curUrl();
+
+      function load_yt() {
+        // check if yt is loaded
+        if (curUrl.indexOf('youtube') != -1) {
+          // click first suggested
+          driver.findElement(By.css(".shelf-content > li:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)")).click();
+          get_curUrl();
+          data_send();
+          if (modeFake == true) {
+            load_video();
+          };
+        }
+        else {
+          setTimeout(load_yt, 1000);
+        }
+      }
+      function load_video() {
+        if (curUrl == ytUrl) {
+          setTimeout(load_video, 1000);
+        }
+        else {
+          load_related();
+        }
+      }
+
+      function load_related() {
+        get_curUrl();
+        
+        if (curUrl == preVideo) {
+          setTimeout(function(){
+            if (modeFake == true) {
+              load_related();
+            };
+          },1000)
+        }
+        else {
+          preVideo = curUrl;
+          driver.findElement(By.css("#eow-title")).getText().then(function(s) {
+            data[2] = s;
+            data_send();
+            
+            // TODO: get time for timeout
+            setTimeout(function(){
+              if (modeFake == true) {
+                driver.findElement(By.css("#watch7-sidebar-modules > div:nth-child(1) > div > div.watch-sidebar-body > ul > li > div.content-wrapper > a")).click();
+                load_related();
+              };
+            }, 4000);
+          });
+        }
+      } 
+    }
+
+    var fakers = [fake_wiki, fake_youtube];
+    if (f == 0) { f = 1 } else { f = 0 };
+    fakers[f]();
+
+  });
+  
+  // menu
+  ipcMain.on('continue', function(event) {
+    var goToGoogle = 'http://google.com';
+    // TODO: go to adil's handshake
+    driver.get(goToGoogle);
+  });
+
+  ipcMain.on('github', function(event){
+    console.log("github");
+    var goToGithub = 'https://github.com/goldsteinsveta/Adil';
+    driver.get(goToGithub);
+  });
+
+  ipcMain.on('about', function(event){
+    console.log("github");
+    var goToAbout = 'http://datavalueadded.org/adil';
+    driver.get(goToAbout);
   });
 
 });

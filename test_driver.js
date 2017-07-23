@@ -52,38 +52,89 @@ function get_curUrl() {
 	});
 }
 
-function load_wiki() {
-	get_curUrl();
+	function fake_youtube() {
+      var ytUrl = 'https://www.youtube.com/';
+      driver.get(ytUrl);
+      load_yt();
+      get_curUrl();
+
+      function load_yt() {
+        // check if yt is loaded
+        if (curUrl.indexOf('youtube') != -1) {
+          // driver.findElement(By.xpath('//*[@id="n-randompage"]/a')).click();
+          driver.findElement(By.css(".shelf-content > li:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)")).click();
+          get_curUrl();
+          load_video();
+        }
+        else {
+          setTimeout(load_yt, 1000);
+        }
+      }
+      function load_video() {
+      	if (curUrl == ytUrl) {
+      		setTimeout(load_video, 1000);
+      	}
+      	else {
+      		// TODO: get time for timeout
+      		setInterval(function(){
+      			get_curUrl();
+      			
+      			driver.findElement(By.css("#eow-title")).getText().then(function(s) {
+  					console.log(s);
+				});
+
+      			console.log(curUrl);
+      			driver.findElement(By.css("li.related-list-item:nth-child(1) > div:nth-child(2) > a:nth-child(1)")).click();
+      		}, 4000)
+      	}
+      }
+    }
+
+get_curUrl();
+function init() {
+	if (curUrl == undefined) {
+		setTimeout(function(){
+			console.log('initializing');
+			init();
+		}, 1000)
+	}
+	else {
+		fake_youtube();
+	}
+}
+init();
+
+
+// function load_wiki() {
+// 	get_curUrl();
 	
-	if (curUrl == wikiUrl) {
-		console.log('----> at zh.wiki');
-		driver.findElement(By.xpath('//*[@id="n-randompage"]/a')).click();	
-		load_article();
-	}
-	else {
-		setTimeout(load_wiki, 1000);
-	}
-}
-function load_article() {
+// 	if (curUrl == wikiUrl) {
+// 		console.log('----> at zh.wiki');
+// 		driver.findElement(By.xpath('//*[@id="n-randompage"]/a')).click();	
+// 		load_article();
+// 	}
+// 	else {
+// 		setTimeout(load_wiki, 1000);
+// 	}
+// }
+// function load_article() {
 
-	get_curUrl();
-	if (curUrl == wikiUrl) {
-		setTimeout(load_article, 1000);
-	}
-	else {
-		// get string
-		// ('https://zh.wikipedia.org/wiki/').length == 30;
-		var s = curUrl.substring(30, curUrl.length);
+// 	get_curUrl();
+// 	if (curUrl == wikiUrl) {
+// 		setTimeout(load_article, 1000);
+// 	}
+// 	else {
+// 		// get string
+// 		// ('https://zh.wikipedia.org/wiki/').length == 30;
+// 		var s = curUrl.substring(30, curUrl.length);
 
-		// search string
-		driver.get('https://www.google.de/search?q=' + s + '"');
-		driver.executeScript("window.history.go(-2)");
-		load_wiki();
-	}
-}
+// 		// search string
+// 		driver.get('https://www.google.de/search?q=' + s + '"');
+// 		driver.executeScript("window.history.go(-2)");
+// 		load_wiki();
+// 	}
+// }
 
-driver.get(wikiUrl);
-load_wiki();
 
 
 
