@@ -86,9 +86,9 @@ var mb = menubar({
 
 mb.on('ready', function ready () {
   // menubar icon
-  const {Tray} = require('electron');
+  /*const {Tray} = require('electron');
   var iconPath = path.join(__dirname, 'IconTemplate.png')
-  const app_icon = new Tray(iconPath);
+  const app_icon = new Tray(iconPath);*/
   // show adil
   mb.showWindow();
 
@@ -106,7 +106,7 @@ mb.on('ready', function ready () {
         .build();
 
       // first link
-      var preUrl = 'http://datavalueadded.org/Adil/';
+      var preUrl = 'http://google.com/';
       driver.get(preUrl);
     };
 
@@ -132,7 +132,7 @@ mb.on('ready', function ready () {
         var dataPath = path.join(__dirname, 'data', 'data.csv');
         fs.appendFile(dataPath, data + '\n', function (err) {
           if (err) {
-            console.log('----> err!');  
+            console.log('----> err!');
           };
           console.log('----> saved!');
 
@@ -146,7 +146,7 @@ mb.on('ready', function ready () {
             }
           );
         });
-        
+
       };
     });
   });
