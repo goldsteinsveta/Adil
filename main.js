@@ -269,18 +269,22 @@ mb.on('ready', function ready () {
         }
         else {
           preVideo = curUrl;
-          driver.findElement(By.css("#eow-title")).getText().then(function(s) {
-            data[2] = s;
-            data_send();
-            
-            // TODO: get time for timeout
-            setTimeout(function(){
-              if (modeFake == true) {
-                driver.findElement(By.css("#watch7-sidebar-modules > div:nth-child(1) > div > div.watch-sidebar-body > ul > li > div.content-wrapper > a")).click();
-                load_related();
-              };
-            }, 4000);
-          });
+          // TODO: check if element exists instead of timeout
+          setTimeout(function(){
+            driver.findElement(By.css("#eow-title")).getText().then(function(s) {
+              data[2] = s;
+              data_send();
+              
+              // TODO: get time for timeout
+              setTimeout(function(){
+                if (modeFake == true) {
+                  driver.findElement(By.css("#watch7-sidebar-modules > div:nth-child(1) > div > div.watch-sidebar-body > ul > li > div.content-wrapper > a")).click();
+                  load_related();
+                };
+              }, 4000);
+            });
+
+          },1000)
         }
       } 
     }
