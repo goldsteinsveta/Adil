@@ -32,7 +32,7 @@ $(window).ready(function() {
     $("#collect").removeClass("active");
     $(".item").css({ marginLeft: "-200%" });
     $("#counter_div").delay(0).fadeIn(0);
-    setInterval(upd_lines, 1000);
+    setInterval(upd_lines, 500);
   });
 
   //menu
@@ -92,9 +92,13 @@ $(window).ready(function() {
         var interval = setInterval(monitorWrite_char, 10);
 
         function monitorWrite_char() {
-            $(monitor + '> div:last-child')
-              .addClass('monitor_msg')
-              .append(data[i]);
+            $(monitor + '> div:last-child').addClass('monitor_msg')
+            if(data[i].match(/^[0-9]+$/) == null){
+              $(monitor + '> div:last-child').append(data[i]);
+            }else{
+              $(monitor + '> div:last-child').append('<span class="number">' + data[i] + '</span>')
+            }
+            $('.item_inner_top').scrollTop(1000000000000);
             i++;
 
             if (i >= data.length) {

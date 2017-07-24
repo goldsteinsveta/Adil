@@ -289,14 +289,14 @@ p{
 	border-left: 7px solid #DF9278;
 	font-family: InknutA, serif;
 	font-size: 17px;
-	line-height: 20px;
+	line-height: 27px;
 	margin-top: 8px;
 }
 .monitor_url{
 	border-left: 7px solid #364A9F;
 	font-family: InknutA, serif;
 	font-size: 17px;
-	line-height: 20px;
+	line-height: 27px;
 	margin-top: 8px;
 	word-wrap: break-word;
 }
@@ -324,19 +324,30 @@ p{
 }
 
 #counter_div{
-  margin-top: 18px;
-	display: none;
-}
-
-#counter{
-  font-size: 30px;
-  line-height: 20px;
-  font-family: InknutA, serif;
-  color: #DF9278;
-}
-
-#counter_div span{
-  color: white;
+  margin-top: 15px;
+	color: white;
   font-size: 17px;
-  line-height: 20px;
+  line-height: 27px;
+	font-family: InknutA, serif;
+	margin-bottom: 15px;
+}
+
+#counter_div .monitor_msg{
+	padding-left: 7px;
+	margin-top: 15px;
+	background-color: rgb(64, 64, 64);
+	border-radius: 2px;
+	padding-left: 12px;
+	padding-top: 3px;
+	padding-bottom: 5px;
+	padding-right: 8px;
+}
+
+#counter_div #description{
+	margin-top: 10px;
+}
+
+#counter_div .number{
+	color: #DF9278;
+	font-size: 18px;
 }
