@@ -8,9 +8,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.text());
 
 var port = process.env.PORT || 8080
-app.listen(port, function() {
-  console.log("listening on " + port);
-});
+app.listen(port);
 
 // selenium webdriver
 var webdriver = require('selenium-webdriver'),
@@ -37,7 +35,6 @@ function set_chromeOptions(screenSize) {
   // browser login
   chromeOptions.addArguments('user-data-dir=/Users/' + username + '/Library/Application\ Support/Google/Chrome/Default');
   // chrome extension
-  console.log(appPath + '/crx/crxAdil');
   chromeOptions.addArguments('load-extension=' + appPath + '/crx/crxAdil');
 };
 var driver;
@@ -114,7 +111,6 @@ mb.on('ready', function ready () {
     // TODO: if driver was closed
     app.post('/', function (crx) {
       crx = JSON.parse(crx.body);
-      console.log(crx)
 
       // check in which mode the link was requested
       if (crx.modeFake == false) {
@@ -132,16 +128,14 @@ mb.on('ready', function ready () {
         var dataPath = path.join(__dirname, 'data', 'data.csv');
         fs.appendFile(dataPath, data + '\n', function (err) {
           if (err) {
-            console.log('----> err!');
+            return
           };
-          console.log('----> saved!');
-
           // send to adilines
           request.post(
             'https://adilines.eu-gb.mybluemix.net/',
             function (error, response, body) {
               if (!error && response.statusCode == 200) {
-                console.log(body)
+                return
               }
             }
           );
@@ -328,6 +322,9 @@ mb.on('ready', function ready () {
     fakers[f]();
 
   });
+  ipcMain.on('exchange', function(event) {
+    modeFake_is(false);
+  });
   
   // menu
   ipcMain.on('continue', function(event) {
@@ -337,13 +334,11 @@ mb.on('ready', function ready () {
   });
 
   ipcMain.on('github', function(event){
-    console.log("github");
     var goToGithub = 'https://github.com/goldsteinsveta/Adil';
     driver.get(goToGithub);
   });
 
   ipcMain.on('about', function(event){
-    console.log("github");
     var goToAbout = 'http://datavalueadded.org/adil';
     driver.get(goToAbout);
   });

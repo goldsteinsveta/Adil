@@ -1,13 +1,9 @@
-
-
 $(window).ready(function() {
 
   //menu
   $("body").delay(200).fadeIn();
 
   $("#continue").click(function(event){
-    //$("#arrow").css({ left: "103%" });
-    //$("#confirmation").fadeOut(0);
     $("#log_in").css({ left: "100%" });
   });
 
@@ -59,23 +55,15 @@ $(window).ready(function() {
 		    type: "GET",
 		    dataType: 'json',
 		    success: function (data) {
-		    	console.log(data);
           if (lines != data.lines) {
             lines = data.lines;
             var counterString = "-> " + lines.toString() + " lines of data were already collected by all users of Adil.";
             counter.empty();
             exchangeWrite(counterString);
           }
-		    	// counter.empty();
-		        // counter.append("-> " + data.lines + " lines" + " <span> of data were already collected by all users of Adil.<br><br> In the future users will have the possibility to trade produced data and its parts with interested companies, institutions and organizations for an exchange rate they find acceptable. </span>");
-            // var counterString = data.lines.toString();
-            // exchangeWrite(counterString);
 		    }
 		});
 	}
-
-	// setInterval(upd_lines, 1000);
-
 
   //monitor data lines
   function exchangeWrite(data) {
@@ -120,10 +108,6 @@ var btn_driver = $('button#driver');
 btn_driver.click(function(){
   $('#faker').prop('disabled', false);
 });
-
-// $.getJSON( "../data/data.json", function( json ) {
-//   $('#statsBox .boxInner').prepend(JSON.stringify(json));
-// });
 
 jQuery.get("../data/data.json", undefined, function(data) {
   $('#statsBox .boxInner').prepend(data);

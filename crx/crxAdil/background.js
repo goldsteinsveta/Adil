@@ -24,19 +24,15 @@ function parse(curUrl, modeFake) {
 
 	    // parse curUrl
 	    if (curUrl.indexOf('google') !== -1) {
-	      console.log('it is google!');
 
 	      // check if there's a search
 	      if (curUrl.indexOf('#q') !== -1 || curUrl.indexOf('search?q=') !== -1) {
-	        console.log('it is google search');
 
 	        // check if preUrl was google.com or a search too
 	        if (curUrl.indexOf('#q') !== -1 && (preUrl.indexOf('search?q=') !== -1 || preUrl.indexOf('?gfe') !== -1)) {
-	          console.log('requested from google website');
 	          search = curUrl.substring(curUrl.indexOf('#q=') + 3);
 	        }
 	        else {
-	          console.log('requested from browser address bar');
 	          search = curUrl.substring(curUrl.indexOf('search?q=') + 9, curUrl.indexOf('&'));
 	        }
 
@@ -60,7 +56,6 @@ function parse(curUrl, modeFake) {
 			"s": search, 
 			"modeFake": modeFake
 		};
-		console.log(data);
 
 		var xhr = new XMLHttpRequest();
 	    xhr.open("POST", "http://localhost:8080", true);
