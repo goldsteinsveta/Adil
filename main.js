@@ -269,8 +269,25 @@ mb.on('ready', function ready () {
         }
         else {
           preVideo = curUrl;
-          // TODO: check if element exists instead of timeout
-          setTimeout(function(){
+
+          // find title of the video
+          function find_title(){
+            driver.findElement(webdriver.By.css("#eow-title")).then(function(el) {
+              // load next related video
+              load_relatedNext();
+            }, function(err) {
+              // try to load element again
+              setTimeout(function(){
+                find_title();
+              },1000)
+            });
+          }
+          find_title();
+
+
+          function load_relatedNext() {
+            // TODO: in find title()
+            // post title in monitor
             driver.findElement(By.css("#eow-title")).getText().then(function(s) {
               data[2] = s;
               data_send();
@@ -278,13 +295,30 @@ mb.on('ready', function ready () {
               // TODO: get time for timeout
               setTimeout(function(){
                 if (modeFake == true) {
-                  driver.findElement(By.css("#watch7-sidebar-modules > div:nth-child(1) > div > div.watch-sidebar-body > ul > li > div.content-wrapper > a")).click();
-                  load_related();
+
+                  // find link to next video
+                  function find_next(){
+                    driver.findElement(webdriver.By.css("#watch7-sidebar-modules > div:nth-child(1) > div > div.watch-sidebar-body > ul > li > div.content-wrapper > a")).then(function(el) {
+                      el.click();
+
+                      // repeat
+                      load_related();
+
+                    }, function(err) {
+                      // try to load element again
+                      setTimeout(function(){
+                        find_next();
+                      },1000)
+                    });
+
+                  }
+                  find_next();
                 };
               }, 4000);
             });
 
-          },1000)
+          }
+
         }
       } 
     }
