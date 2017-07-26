@@ -10,12 +10,9 @@ Adil is a menubar desktop application for Mac OS that:
 
 
 ### Setup
-- git clone https://github.com/mmmmmmmmmmmmmmmm/Adil
-- install modules
-- run the script
-	- cd Adil
-	- npm start
+- git clone https://github.com/goldsteinsveta/Adil
+- cd Adil
+- npm install
+- npm start
 
-### To-do:
-- exchange section (data lines)
-- export
+
