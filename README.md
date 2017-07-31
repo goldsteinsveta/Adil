@@ -24,5 +24,5 @@ npm install
 npm start
 
 # export mac app
-npm build
+npm run build
 ```
